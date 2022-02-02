@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_note/domain/model/note.dart';
-import 'package:flutter_note/domain/repository/note_repository.dart';
+import 'package:flutter_note/domain/use_case/use_cases.dart';
 import 'package:flutter_note/presentation/notes/notes_event.dart';
 import 'package:flutter_note/presentation/notes/notes_state.dart';
 
@@ -9,14 +9,16 @@ import 'package:flutter_note/presentation/notes/notes_state.dart';
   기능 : 기록한 메모 전체 리스트 불러오기, 메모 삭제, 삭제 메모 복구
  */
 class NotesViewModel with ChangeNotifier {
-  final NoteRepository repository;
+  final UseCases useCases;
+
+  NotesViewModel(
+    this.useCases,
+  ) {
+    _loadNotes();
+  }
 
   // 삭제한 노트를 저장할 변수
   Note? _recentlyDeletedNote;
-
-  NotesViewModel(this.repository) {
-    _loadNotes();
-  }
 
   // NotesState _state = NotesState();  => @Default 사용해서 초기화 했을 경우 사용
   NotesState _state = NotesState(notes: []);
@@ -38,7 +40,7 @@ class NotesViewModel with ChangeNotifier {
 
   // 노트 전체 리스트 가져오기
   Future<void> _loadNotes() async {
-    List<Note> notes = await repository.getNotes();
+    List<Note> notes = await useCases.getNotes();
     _state = state.copyWith(
       notes: notes,
     );
@@ -48,7 +50,7 @@ class NotesViewModel with ChangeNotifier {
   // 휴지통 아이콘으로 해당 노트 삭제하기
   // 삭제한 노트를 되살리기 위해, _recentlyDeleteNote에 저장해 둔다
   Future<void> _deleteNote(Note note) async {
-    await repository.deleteNote(note);
+    await useCases.deleteNote(note);
     _recentlyDeletedNote = note;
 
     await _loadNotes();
@@ -57,7 +59,7 @@ class NotesViewModel with ChangeNotifier {
   // 삭제한 노트 되살리기
   Future<void> _restoreNote() async {
     if (_recentlyDeletedNote != null) {
-      await repository.insertNote(_recentlyDeletedNote!);
+      await useCases.addNote(_recentlyDeletedNote!);
       _recentlyDeletedNote = null;
 
       _loadNotes();
