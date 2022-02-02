@@ -43,6 +43,13 @@ class AddEditNoteViewModel with ChangeNotifier {
   // 기존 메모를 변경 작성으로 들어올 경우 id가 있으므로 업데이트 작성으로
   // 2가지 경우로 작성한다
   Future<void> _saveNote(int? id, String title, String content) async {
+    if (title.isEmpty || content.isEmpty) {
+      _eventController.add(
+        const AddEditNoteUiEvent.showSnackBar('제목이나 내용이 비어 있습니다'),
+      );
+      return;
+    }
+
     if (id == null) {
       await repository.insertNote(
         Note(

@@ -34,7 +34,7 @@ class NotesScreen extends StatelessWidget {
             MaterialPageRoute(builder: (context) => const AddEditNoteScreen()),
           );
 
-          // 저장 버튼을 눌렀을 경우,
+          // 새 메모 저장 버튼을 눌렀을 경우,
           // 에디트 화면은 pop 시키고, 새로고침 이벤트로 추가된 노트를 표시하게 한다
           if (isSaved != null && isSaved) {
             viewModel.onEvent(const NotesEvent.loadNotes());
@@ -45,26 +45,43 @@ class NotesScreen extends StatelessWidget {
       body: ListView(
         children: state.notes
             .map(
-              (note) => NoteItem(
-                note: note,
-                onDeleteTap: () {
-                  viewModel.onEvent(
-                    NotesEvent.deleteNote(note),
-                  );
-
-                  final snackBar = SnackBar(
-                    content: Text('노트가 삭제되었습니다'),
-                    action: SnackBarAction(
-                      label: '취소',
-                      onPressed: () {
-                        viewModel.onEvent(
-                          NotesEvent.restoreNote(),
-                        );
-                      },
+              (note) => GestureDetector(
+                onTap: () async {
+                  bool? isSaved = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AddEditNoteScreen(
+                        note: note,
+                      ),
                     ),
                   );
-                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                  // 기존 메모 업데이트에서 저장 버튼을 눌렀을 경우,
+                  // 에디트 화면은 pop 시키고, 새로고침 이벤트로 추가된 노트를 표시하게 한다
+                  if (isSaved != null && isSaved) {
+                    viewModel.onEvent(const NotesEvent.loadNotes());
+                  }
                 },
+                child: NoteItem(
+                  note: note,
+                  onDeleteTap: () {
+                    viewModel.onEvent(
+                      NotesEvent.deleteNote(note),
+                    );
+
+                    final snackBar = SnackBar(
+                      content: Text('노트가 삭제되었습니다'),
+                      action: SnackBarAction(
+                        label: '취소',
+                        onPressed: () {
+                          viewModel.onEvent(
+                            NotesEvent.restoreNote(),
+                          );
+                        },
+                      ),
+                    );
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                  },
+                ),
               ),
             )
             .toList(),

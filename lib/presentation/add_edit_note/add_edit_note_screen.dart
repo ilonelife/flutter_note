@@ -40,6 +40,14 @@ class _AddEditNoteScreenState extends State<AddEditNoteScreen> {
   @override
   void initState() {
     super.initState();
+
+    // 기존 메모를 선택해서 에디트 화면으로 이동한 경우
+    // 기존 메모 내용을 표시하게 처리함
+    if (widget.note != null) {
+      _titleController.text = widget.note!.title;
+      _contentController.text = widget.note!.content;
+    }
+
     Future.microtask(() {
       // 새 메모 작성하고 저장 버튼 누르면 해당 이벤트를 처리하는 로직
       // 메모 작성 화면을 닫음(pop),
@@ -48,6 +56,9 @@ class _AddEditNoteScreenState extends State<AddEditNoteScreen> {
       _streamSubscription = viewModel.eventStream.listen((event) {
         event.when(saveNote: () {
           Navigator.pop(context, true);
+        }, showSnackBar: (String message) {
+          final snackBar = SnackBar(content: Text(message));
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
         });
       });
     });
@@ -59,12 +70,17 @@ class _AddEditNoteScreenState extends State<AddEditNoteScreen> {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // 내용이나 제목이 없으면 스낵바로 에러 출력
-          if (_titleController.text.isEmpty ||
-              _contentController.text.isEmpty) {
-            const snackBar = SnackBar(content: Text('제목이나 내용이 없습니다'));
-            ScaffoldMessenger.of(context).showSnackBar(snackBar);
-          }
+          /*
+            내용이나 제목이 없으면 스낵바로 에러 출력하는 로직
+            viewModel에서 구현하기 위해 옮김
+           */
+          // if (_titleController.text.isEmpty ||
+          //     _contentController.text.isEmpty) {
+          //   const snackBar = SnackBar(content: Text('제목이나 내용이 없습니다'));
+          //   ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          //   return;
+          // }
+
           // 새 노트를 저장한다. id가 null이면 null, 아니면  id 전달
           viewModel.onEvent(
             AddEditNoteEvent.saveNote(
