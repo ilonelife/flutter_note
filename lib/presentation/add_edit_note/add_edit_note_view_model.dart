@@ -29,6 +29,7 @@ class AddEditNoteViewModel with ChangeNotifier {
   int _color = roseBud.value;
   int get color => _color;
 
+  // 저장 버튼과 백 버튼 동작 이벤트 처리하기 위해 stream event 로직
   // 여러번 listen 하기 위해 broadcast 추가
   final _eventController = StreamController<AddEditNoteUiEvent>.broadcast();
   Stream<AddEditNoteUiEvent> get eventStream => _eventController.stream;
@@ -60,6 +61,7 @@ class AddEditNoteViewModel with ChangeNotifier {
             timestamp: DateTime.now().millisecondsSinceEpoch),
       );
     }
+    // 에디트 화면에서의 노트 저장 이벤트를 등록함
     _eventController.add(const AddEditNoteUiEvent.saveNote());
   }
 }

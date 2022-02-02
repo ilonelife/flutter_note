@@ -43,9 +43,8 @@ class _AddEditNoteScreenState extends State<AddEditNoteScreen> {
     Future.microtask(() {
       // 새 메모 작성하고 저장 버튼 누르면 해당 이벤트를 처리하는 로직
       // 메모 작성 화면을 닫음(pop),
-      // 저장 버튼과 백버튼을 구분하기 위해 pop(context, true) 값 추가 함
+      // 저장 버튼을 눌렀을 경우 pop(context, true),  백 버튼의 경우와 구분되게 처리함
       final viewModel = context.read<AddEditNoteViewModel>();
-
       _streamSubscription = viewModel.eventStream.listen((event) {
         event.when(saveNote: () {
           Navigator.pop(context, true);
@@ -66,7 +65,7 @@ class _AddEditNoteScreenState extends State<AddEditNoteScreen> {
             const snackBar = SnackBar(content: Text('제목이나 내용이 없습니다'));
             ScaffoldMessenger.of(context).showSnackBar(snackBar);
           }
-
+          // 새 노트를 저장한다. id가 null이면 null, 아니면  id 전달
           viewModel.onEvent(
             AddEditNoteEvent.saveNote(
                 widget.note == null ? null : widget.note!.id,

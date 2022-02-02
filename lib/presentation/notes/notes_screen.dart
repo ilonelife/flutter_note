@@ -34,7 +34,8 @@ class NotesScreen extends StatelessWidget {
             MaterialPageRoute(builder: (context) => const AddEditNoteScreen()),
           );
 
-          // 새로고침
+          // 저장 버튼을 눌렀을 경우,
+          // 에디트 화면은 pop 시키고, 새로고침 이벤트로 추가된 노트를 표시하게 한다
           if (isSaved != null && isSaved) {
             viewModel.onEvent(const NotesEvent.loadNotes());
           }
