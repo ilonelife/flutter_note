@@ -50,6 +50,7 @@ class NotesViewModel with ChangeNotifier {
   Future<void> _deleteNote(Note note) async {
     await repository.deleteNote(note);
     _recentlyDeletedNote = note;
+
     await _loadNotes();
   }
 
