@@ -16,7 +16,7 @@ class NotesScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Your note',
+          '노트앱',
           style: TextStyle(fontSize: 30.0),
         ),
         actions: [

@@ -7,7 +7,7 @@ part 'notes_state.g.dart';
 @freezed
 class NotesState with _$NotesState {
   factory NotesState({
-    // @Default([]) List<Note> notes,
+    // 초기값을 제공하고자 할 경우 : @Default([]) List<Note> notes,
     required List<Note> notes,
   }) = _NotesState;
 

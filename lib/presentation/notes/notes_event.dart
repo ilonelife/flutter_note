@@ -3,6 +3,10 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'notes_event.freezed.dart';
 
+/*note 메인 화면 view model 에서 처리할 이벤트들
+  전체 이벤트 및 앞으로 추가될 수 있는 이벤트도 놓치지 않고 고려한 설계
+  freezed 봉인 클래스 사용함
+ */
 @freezed
 abstract class NotesEvent with _$NotesEvent {
   const factory NotesEvent.loadNotes() = LoadNotes;
