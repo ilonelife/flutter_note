@@ -48,3 +48,6 @@ app.*.map.json
 # freezed related
 *.freezed.dart
 *.g.dart
+
+# Mockito related
+*.mocks.dart

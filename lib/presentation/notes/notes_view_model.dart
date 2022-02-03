@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_note/domain/model/note.dart';
 import 'package:flutter_note/domain/use_case/use_cases.dart';
+import 'package:flutter_note/domain/util/note_order.dart';
+import 'package:flutter_note/domain/util/order_type.dart';
 import 'package:flutter_note/presentation/notes/notes_event.dart';
 import 'package:flutter_note/presentation/notes/notes_state.dart';
 
@@ -21,7 +23,12 @@ class NotesViewModel with ChangeNotifier {
   Note? _recentlyDeletedNote;
 
   // NotesState _state = NotesState();  => @Default 사용해서 초기화 했을 경우 사용
-  NotesState _state = NotesState(notes: []);
+  NotesState _state = NotesState(
+    notes: [],
+    noteOrder:
+        const NoteOrder.date(OrderType.descending()), // 정렬 기본값으로 date 설정함
+  );
+
   NotesState get state => _state;
 
   // 다양한 상태 관리를 위해서 위의 NotesState 로 대체함..
@@ -35,12 +42,18 @@ class NotesViewModel with ChangeNotifier {
       loadNotes: _loadNotes,
       deleteNote: _deleteNote,
       restoreNote: _restoreNote,
+      changeOrder: (NoteOrder noteOrder) {
+        _state = state.copyWith(
+          noteOrder: noteOrder,
+        );
+        _loadNotes();
+      },
     );
   }
 
   // 노트 전체 리스트 가져오기
   Future<void> _loadNotes() async {
-    List<Note> notes = await useCases.getNotes();
+    List<Note> notes = await useCases.getNotes(state.noteOrder);
     _state = state.copyWith(
       notes: notes,
     );
