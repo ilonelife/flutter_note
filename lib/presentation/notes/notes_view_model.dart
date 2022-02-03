@@ -25,8 +25,8 @@ class NotesViewModel with ChangeNotifier {
   // NotesState _state = NotesState();  => @Default 사용해서 초기화 했을 경우 사용
   NotesState _state = NotesState(
     notes: [],
-    noteOrder:
-        const NoteOrder.date(OrderType.descending()), // 정렬 기본값으로 date 설정함
+    noteOrder: const NoteOrder.date(OrderType.descending()),
+    isOrderSectionVisible: false, // 정렬 기본값으로 date 설정함
   );
 
   NotesState get state => _state;
@@ -47,6 +47,12 @@ class NotesViewModel with ChangeNotifier {
           noteOrder: noteOrder,
         );
         _loadNotes();
+      },
+      toggleOrderSection: () {
+        _state = state.copyWith(
+          isOrderSectionVisible: !state.isOrderSectionVisible,
+        );
+        notifyListeners();
       },
     );
   }

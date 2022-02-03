@@ -10,5 +10,6 @@ class NotesState with _$NotesState {
     // 초기값을 제공하고자 할 경우 : @Default([]) List<Note> notes,
     required List<Note> notes,
     required NoteOrder noteOrder,
+    required bool isOrderSectionVisible,
   }) = _NotesState;
 }

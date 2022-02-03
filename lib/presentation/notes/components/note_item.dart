@@ -27,7 +27,10 @@ class NoteItem extends StatelessWidget {
               children: [
                 Text(
                   note.title,
-                  style: Theme.of(context).textTheme.headline6,
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline6!
+                      .apply(color: Colors.black),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -36,7 +39,10 @@ class NoteItem extends StatelessWidget {
                 ),
                 Text(
                   note.content,
-                  style: Theme.of(context).textTheme.bodyText1,
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyText1!
+                      .apply(color: darkGray),
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
                 ),

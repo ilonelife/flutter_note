@@ -22,7 +22,9 @@ class NotesScreen extends StatelessWidget {
         ),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              viewModel.onEvent(const NotesEvent.toggleOrderSection());
+            },
             icon: const Icon(Icons.sort),
           )
         ],
@@ -43,56 +45,64 @@ class NotesScreen extends StatelessWidget {
         },
         child: const Icon(Icons.add),
       ),
-      body: ListView(children: [
-        OrderSection(
-          noteOrder: viewModel.state.noteOrder,
-          onOrderChanged: (noteOrder) {
-            viewModel.onEvent(NotesEvent.changeOrder(noteOrder));
-          },
-        ),
-        ...state.notes
-            .map(
-              (note) => GestureDetector(
-                onTap: () async {
-                  bool? isSaved = await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => AddEditNoteScreen(
-                        note: note,
-                      ),
-                    ),
-                  );
-                  // 기존 메모 업데이트에서 저장 버튼을 눌렀을 경우,
-                  // 에디트 화면은 pop 시키고, 새로고침 이벤트로 추가된 노트를 표시하게 한다
-                  if (isSaved != null && isSaved) {
-                    viewModel.onEvent(const NotesEvent.loadNotes());
-                  }
-                },
-                child: NoteItem(
-                  note: note,
-                  onDeleteTap: () {
-                    viewModel.onEvent(
-                      NotesEvent.deleteNote(note),
-                    );
-
-                    final snackBar = SnackBar(
-                      content: Text('노트가 삭제되었습니다'),
-                      action: SnackBarAction(
-                        label: '취소',
-                        onPressed: () {
-                          viewModel.onEvent(
-                            NotesEvent.restoreNote(),
-                          );
-                        },
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: ListView(children: [
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 300),
+            child: state.isOrderSectionVisible
+                ? OrderSection(
+                    noteOrder: viewModel.state.noteOrder,
+                    onOrderChanged: (noteOrder) {
+                      viewModel.onEvent(NotesEvent.changeOrder(noteOrder));
+                    },
+                  )
+                : Container(),
+          ),
+          ...state.notes
+              .map(
+                (note) => GestureDetector(
+                  onTap: () async {
+                    bool? isSaved = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AddEditNoteScreen(
+                          note: note,
+                        ),
                       ),
                     );
-                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    // 기존 메모 업데이트에서 저장 버튼을 눌렀을 경우,
+                    // 에디트 화면은 pop 시키고, 새로고침 이벤트로 추가된 노트를 표시하게 한다
+                    if (isSaved != null && isSaved) {
+                      viewModel.onEvent(const NotesEvent.loadNotes());
+                    }
                   },
+                  child: NoteItem(
+                    note: note,
+                    onDeleteTap: () {
+                      viewModel.onEvent(
+                        NotesEvent.deleteNote(note),
+                      );
+
+                      final snackBar = SnackBar(
+                        content: Text('노트가 삭제되었습니다'),
+                        action: SnackBarAction(
+                          label: '취소',
+                          onPressed: () {
+                            viewModel.onEvent(
+                              NotesEvent.restoreNote(),
+                            );
+                          },
+                        ),
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    },
+                  ),
                 ),
-              ),
-            )
-            .toList(),
-      ]),
+              )
+              .toList(),
+        ]),
+      ),
     );
   }
 }
